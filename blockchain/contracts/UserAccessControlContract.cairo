@@ -1,22 +1,30 @@
-%lang starknet
+#[starknet::interface]
+trait IUserAccessControlContract<TContractState> {
+    fn assign_role(ref self: TContractState, user_address: felt252, role: felt252);
+    fn check_role(self: @TContractState, user_address: felt252, role: felt252) -> felt252;
+}
 
-@storage_var
-func user_roles(user_address: felt) -> (role: felt):
-end
+#[starknet::contract]
+mod UserAccessControlContract {
+    #[storage]
+    struct Storage {
+        user_roles: LegacyMap<felt252, felt252>,
+    }
 
-@external
-func assign_role(user_address: felt, role: felt):
-    user_roles.write(user_address, role)
-    return ()
-end
+    #[abi(embed_v0)]
+    impl UserAccessControlContract of super::IUserAccessControlContract<ContractState> {
+        fn assign_role(ref self: ContractState, user_address: felt252, role: felt252) {
+            self.user_roles.write(user_address, role);
+        }
 
-@view
-func check_role(user_address: felt, role: felt) -> (has_role: felt):
-    let (stored_role) = user_roles.read(user_address)
-    if stored_role == role:
-        return (1)
-    else:
-        return (0)
-    end
-end
+        fn check_role(self: @ContractState, user_address: felt252, role: felt252) -> felt252 {
+            let stored_role = self.user_roles.read(user_address);
+            if stored_role == role {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+}
 
