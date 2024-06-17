@@ -1,0 +1,30 @@
+\begin{tikzpicture}[
+    node distance=1.5cm, auto,
+    block/.style ={rectangle, draw=black, thick, fill=white, text centered, minimum height=3em, minimum width=5em},
+    line/.style ={draw, thick, -latex', shorten >=2pt},
+]
+
+% Nodes
+\node [block] (iot) {IIoT Devices};
+\node [block, right=of iot] (backend) {Data Processing Backend};
+\node [block, right=of backend] (database) {MongoDB};
+\node [block, below=of backend] (ml) {Machine Learning Models};
+\node [block, below=of database] (blockchain) {StarkNet};
+\node [block, above=of backend] (frontend) {Web Interface};
+
+% Lines
+\path [line] (iot) -- (backend);
+\path [line] (backend) -- (database);
+\path [line] (backend) -- (ml);
+\path [line] (ml) -- (blockchain);
+\path [line] (database) -- (blockchain);
+\path [line] (backend) -- (frontend);
+\path [line] (frontend) -- (database);
+
+% Additional lines to show interactions
+\path [line, dashed] (iot) -- (blockchain);
+\path [line, dashed] (ml) -- (frontend);
+\path [line, dashed] (blockchain) -- (frontend);
+
+\end{tikzpicture}
+
